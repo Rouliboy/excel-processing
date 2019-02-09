@@ -3,12 +3,10 @@ package com.nexity.wgl.excel;
 import java.lang.reflect.Field;
 import java.util.function.Function;
 import com.nexity.wgl.excel.annotations.ExcelColumn;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
-public class ColumnFunctions {
+public final class ColumnFunctions {
 
-  public Function<Field, ColumnMetadata> toColumnMetadata() {
+  public static Function<Field, ColumnMetadata> toColumnMetadata() {
     return f -> {
 
       final ExcelColumn excelColumn = f.getAnnotation(ExcelColumn.class);
@@ -22,13 +20,4 @@ public class ColumnFunctions {
       // @formatter:on
     };
   }
-
-  // private Class<?> getType(final Field f, final ExcelColumn excelColumn) {
-  //
-  // if (excelColumn.serializeAsString()) {
-  // return String.class;
-  // } else {
-  // return f.getType();
-  // }
-  // }
 }
