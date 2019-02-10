@@ -21,7 +21,7 @@ public class ColumnMetadataExtractorTest {
 
     System.out.println(columns);
 
-    final WorkBookCreator wbc = new WorkBookCreator();
+    final ExcelCreator wbc = new ExcelCreator();
     wbc.createFrom("Test", values, TestPojoWithColumns.class);
   }
 

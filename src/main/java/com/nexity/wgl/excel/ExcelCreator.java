@@ -1,7 +1,8 @@
 package com.nexity.wgl.excel;
 
 import static org.reflections.ReflectionUtils.withName;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -19,38 +20,40 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.reflections.ReflectionUtils;
 import com.nexity.wgl.excel.converters.ColumnDataSerializer;
 
-public class WorkBookCreator {
+public class ExcelCreator {
 
   /** BETTER CREATE THIS METHOD FOR A SINGLE SHEET TO ENABLE MULTI SHEETS WORKBOOKS */
-  public <T> void createFrom(final String sheetName, final List<T> data, final Class<T> model)
-      throws IOException {
-    final Workbook workbook = new XSSFWorkbook();
+  public <T> ByteArrayInputStream createFrom(final String sheetName, final List<T> data,
+      final Class<T> model) throws IOException {
 
-    /*
-     * CreationHelper helps us create instances of various things like DataFormat, Hyperlink,
-     * RichTextString etc, in a format (HSSF, XSSF) independent way
-     */
-    final CreationHelper createHelper = workbook.getCreationHelper();
+    try (Workbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+      /*
+       * CreationHelper helps us create instances of various things like DataFormat, Hyperlink,
+       * RichTextString etc, in a format (HSSF, XSSF) independent way
+       */
+      final CreationHelper createHelper = workbook.getCreationHelper();
 
-    final ColumnMetadataExtractor columnExtractor = new ColumnMetadataExtractor();
-    final List<ColumnMetadata> columns = columnExtractor.extract(model);
+      final ColumnMetadataExtractor columnExtractor = new ColumnMetadataExtractor();
+      final List<ColumnMetadata> columns = columnExtractor.extract(model);
 
-    // Create a Sheet
-    final Sheet sheet = workbook.createSheet(sheetName);
+      // Create a Sheet
+      final Sheet sheet = workbook.createSheet(sheetName);
 
-    // create headers
-    createHeaders(sheet, columns);
+      // create headers
+      createHeaders(sheet, columns);
 
-    // Append Data
-    addBeanData(sheet, columns, data);
+      // Append Data
+      addBeanData(sheet, columns, data);
 
-    // Write the output to a file
-    final FileOutputStream fileOut = new FileOutputStream("poi-generated-file.xlsx");
-    workbook.write(fileOut);
-    fileOut.close();
+      // // Write the output to a file
+      // final FileOutputStream fileOut = new FileOutputStream("poi-generated-file.xlsx");
+      // workbook.write(fileOut);
+      // fileOut.close();
 
-    // Closing the workbook
-    workbook.close();
+      workbook.write(out);
+      return new ByteArrayInputStream(out.toByteArray());
+    }
   }
 
   private void createHeaders(final Sheet sheet, final List<ColumnMetadata> columns) {
