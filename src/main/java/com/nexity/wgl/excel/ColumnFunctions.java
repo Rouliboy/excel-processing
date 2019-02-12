@@ -16,6 +16,7 @@ public final class ColumnFunctions {
           .beanFieldName(f.getName())
           .name(excelColumn.name())
           .serializer(excelColumn.serializer())
+          .style(excelColumn.style())
           .build();
       // @formatter:on
     };

@@ -1,5 +1,6 @@
 package com.nexity.wgl.excel;
 
+import com.nexity.wgl.excel.annotations.ExcelColumn.Style;
 import com.nexity.wgl.excel.converters.ColumnDataSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,6 @@ public class ColumnMetadata {
   private String name;
   private String beanFieldName;
   private Class<? extends ColumnDataSerializer<?, ?>> serializer;
+  private Style style;
 
 }

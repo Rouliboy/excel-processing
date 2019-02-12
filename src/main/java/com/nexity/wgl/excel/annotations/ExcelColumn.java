@@ -17,4 +17,10 @@ public @interface ExcelColumn {
 
   /** Optional serializer */
   Class<? extends ColumnDataSerializer<?, ?>> serializer() default DefaultDataSerializer.class;
+
+  Style style() default Style.NONE;
+
+  public static enum Style {
+    NONE, WRAP;
+  }
 }

@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.reflections.ReflectionUtils;
+import com.nexity.wgl.excel.annotations.ExcelColumn.Style;
 import com.nexity.wgl.excel.converters.ColumnDataSerializer;
 
 public class ExcelCreator {
@@ -116,7 +117,7 @@ public class ExcelCreator {
         final ColumnDataSerializer<?, Object> converter =
             (ColumnDataSerializer<?, Object>) metadata.getSerializer().newInstance();
         fieldValue = converter.serialize(fieldValue);
-        writeToCellWithType(cell, fieldValue);
+        writeToCellWithStyle(cell, fieldValue, metadata.getStyle());
       } catch (final InstantiationException e) {
         throw new RuntimeException(e);
       } catch (final IllegalAccessException e) {
@@ -125,9 +126,15 @@ public class ExcelCreator {
     }
   }
 
-  protected void writeToCellWithType(final Cell cell, final Object fieldValueObj) {
+  protected void writeToCellWithStyle(final Cell cell, final Object fieldValueObj,
+      final Style style) {
 
     final Class<?> type = fieldValueObj.getClass();
+
+    if (style == Style.WRAP) {
+      final CellStyle cellStyle = cell.getSheet().getWorkbook().createCellStyle();
+      cellStyle.setWrapText(true);
+    }
 
     if (type == Date.class) {
       cell.setCellValue((Date) fieldValueObj);
